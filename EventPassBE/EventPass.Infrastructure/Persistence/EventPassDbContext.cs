@@ -15,6 +15,7 @@ using EventPass.Domain.Entities.Tickets;
 using EventPass.Domain.Entities.TicketTypes;
 using EventPass.Domain.Entities.Users;
 using EventPass.Domain.Entities.VenueTypes;
+using EventPass.Domain.Entities.Token;
 
 namespace EventPass.Infrastructure.Persistence
 {
@@ -63,6 +64,10 @@ namespace EventPass.Infrastructure.Persistence
         public DbSet<Venue> Venues { get; set; }
         public DbSet<VenueType> VenueTypes{ get; set; }
         public DbSet<Section> Sections{ get; set; }
+
+        //Token
+
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

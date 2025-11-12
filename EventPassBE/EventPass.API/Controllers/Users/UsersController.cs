@@ -1,8 +1,10 @@
-﻿using EventPass.Application.Commands.Users.Delete;
+﻿using EventPass.Application.Commands.Tokens.Create;
+using EventPass.Application.Commands.Users.Delete;
 using EventPass.Application.Commands.Users.Login;
 using EventPass.Application.Commands.Users.Update;
 using EventPass.Application.DTOs.Users;
 using EventPass.Application.DTOs.VenueDTOs;
+using EventPass.Application.Queries.Tokens;
 using EventPass.Application.Queries.Users.GetAll;
 using EventPass.Application.Queries.Users.GetByEmail;
 using EventPass.Application.Queries.Users.GetById;
@@ -21,7 +23,7 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult> Register(RegisterUserCommand command)
+    public async Task<ActionResult> Register([FromBody]RegisterUserCommand command)
     {
         var userId = await _mediator.Send(command);
         if (userId == -1) return BadRequest(new { Message = "Account already exists with given email." });
@@ -37,6 +39,16 @@ public class UsersController : ControllerBase
             return Unauthorized(new { Message = "Invalid name or password." });
         }
         return Ok(result);
+    }
+
+    [HttpPost("refresh")]
+    public async Task<ActionResult> RefreshToken([FromBody]string token, CancellationToken cancellationToken)
+    {
+        var response = await _mediator.Send(new GetRefreshTokenByTokenQuery { token = token}, cancellationToken);
+        if (response == null || response.ExpiryDate < DateTime.UtcNow) return Unauthorized();
+        var user = await _mediator.Send(new GetUserByIdQuery { Id = response.Id }, cancellationToken);
+        var newJwt = await _mediator.Send(new CreateJwtTokenCommand { userId = response.UserId }, cancellationToken);
+        return Ok(new { token = newJwt });
     }
 
     [HttpGet]

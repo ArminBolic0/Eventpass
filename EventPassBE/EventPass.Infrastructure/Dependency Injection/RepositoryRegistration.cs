@@ -19,6 +19,8 @@ using EventPass.Infrastructure.Repositories.Tickets;
 using EventPass.Infrastructure.Repositories.Users;
 using EventPass.Infrastructure.Repositories.Venues;
 using Microsoft.Extensions.DependencyInjection;
+using EventPass.Domain.Interfaces.Tokens;
+using EventPass.Infrastructure.Repositories.Tokens;
 
 namespace EventPass.Infrastructure.Dependency_Injection
 {
@@ -44,6 +46,7 @@ namespace EventPass.Infrastructure.Dependency_Injection
             services.AddScoped<ISponsorRepository, SponsorRepository>();
             services.AddScoped<ICartItemsRepository, CartItemRepository>();
             services.AddScoped<ISponsorEventRepository, SponsorEventRepository>();
+            services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
 
             return services;
         }
